@@ -6,3 +6,5 @@ __pycache__/
 Scripts/
 pyvenv.cfg
 .cache.sqlite
+weather_data/
+combined_data/

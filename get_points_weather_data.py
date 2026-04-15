@@ -13,12 +13,41 @@ openmeteo = openmeteo_requests.Client(session=retry_session)
 
 
 POINTS = [
-    
+    {"latitude": 46.1, "longitude": 14.588, "name": "Beričevo", "location": "Ljubljana", "status": "Obstoječe", "power": "150",},
+    {"latitude": 45.684, "longitude": 13.969, "name": "Divača", "location": "Primorska", "status": "Obstoječe", "power": "150",},
+    {"latitude": 45.958, "longitude": 15.491, "name": "Krško", "location": "Posavje", "status": "Obstoječe", "power": "150",},
+    {"latitude": 46.395, "longitude": 15.794, "name": "Cirkovce", "location": "Ptuj", "status": "Obstoječe", "power": "150",},
+    {"latitude": 46.554, "longitude": 15.646, "name": "Maribor", "location": "Maribor", "status": "Obstoječe", "power": "100",},
+    {"latitude": 46.25, "longitude": 14.35, "name": "Okroglo", "location": "Gorenjska", "status": "Obstoječe", "power": "100",},
+    {"latitude": 46.083, "longitude": 14.475, "name": "Kleče", "location": "Ljubljana", "status": "Obstoječe", "power": "100",},
+    {"latitude": 46.395, "longitude": 15.794, "name": "Kidričevo", "location": "Ptuj", "status": "Obstoječe", "power": "100",},
+    {"latitude": 46.391, "longitude": 15.573, "name": "Slovenska Bistrica", "location": "Štajerska", "status": "Obstoječe", "power": "100",},
+    {"latitude": 45.887, "longitude": 13.909, "name": "Ajdovščina", "location": "Primorska", "status": "Obstoječe", "power": "100",},
+    {"latitude": 45.912, "longitude": 13.64, "name": "Vrtojba", "location": "Nova Gorica", "status": "Obstoječe", "power": "100",},
+    {"latitude": 46.183, "longitude": 13.733, "name": "Tolmin", "location": "Posočje", "status": "Obstoječe", "power": "100",},
+    {"latitude": 45.681, "longitude": 14.197, "name": "Pivka", "location": "Primorska", "status": "Obstoječe", "power": "75",},
+    {"latitude": 46.035, "longitude": 13.585, "name": "Plave", "location": "Nova Gorica", "status": "Obstoječe", "power": "75",},
+    {"latitude": 46.056, "longitude": 14.505, "name": "LCL", "location": "Ljubljana", "status": "Novo", "power": "80",},
+    {"latitude": 46.068, "longitude": 14.54, "name": "Vodenska", "location": "Ljubljana", "status": "Novo", "power": "60",},
+    {"latitude": 46.072, "longitude": 14.471, "name": "Brdo", "location": "Ljubljana (Brdo)", "status": "Novo", "power": "80",},
+    {"latitude": 46.034, "longitude": 14.541, "name": "Rudnik", "location": "Ljubljana (Rudnik)", "status": "Novo", "power": "80",},
+    {"latitude": 46.06, "longitude": 14.566, "name": "Vevče", "location": "Ljubljana (Vevče)", "status": "Novo", "power": "80",},
+    {"latitude": 46.44, "longitude": 14.21, "name": "Vrtača", "location": "Gorenjska", "status": "Novo", "power": "60",},
+    {"latitude": 46.135, "longitude": 14.745, "name": "Moravče", "location": "Osrednja Slovenija", "status": "Novo", "power": "60",},
+    {"latitude": 45.548, "longitude": 13.73, "name": "Luka Koper", "location": "Koper", "status": "Novo", "power": "100",},
+    {"latitude": 46.383, "longitude": 15.388, "name": "Zreče", "location": "Štajerska", "status": "Novo", "power": "80",},
+    {"latitude": 46.521, "longitude": 14.854, "name": "Mežica", "location": "Koroška", "status": "Novo", "power": "60",},
+    {"latitude": 46.224, "longitude": 14.457, "name": "Brnik", "location": "Gorenjska (Letališče)", "status": "Novo", "power": "60",},
+    {"latitude": 46.165, "longitude": 14.306, "name": "Trata", "location": "Škofja Loka", "status": "Novo", "power": "60",},
+    {"latitude": 46.653, "longitude": 16.35, "name": "Dobrovnik", "location": "Prekmurje", "status": "Novo", "power": "80",},
+    {"latitude": 46.56, "longitude": 15.672, "name": "Pobrežje", "location": "Maribor", "status": "Novo", "power": "80",},
+    {"latitude": 46.532, "longitude": 15.592, "name": "Pekre", "location": "Maribor", "status": "Novo", "power": "80",},
+    {"latitude": 46.395, "longitude": 15.794, "name": "Kidričevo", "location": "Ptuj", "status": "Novo", "power": "80",},
 ]
 
-START_DATE = "1986-01-01"
+START_DATE = "2006-01-01"
 END_DATE = "2016-12-31"
-STEP_MONTHS = 2
+STEP_MONTHS = 6
 OUTPUT_DIR = "D:\\FE\\eestec_2026\\weather_data"
 
 
@@ -153,9 +182,9 @@ def get_weather_data_for_point(point_index: int, start_end_dates: tuple[str, str
     return True
 
 
-def save_data_to_csv():
+def save_data_to_csv(current_start_end_dates: tuple[str, str]):
     for (latitude, longitude), point in lookup_table_points.items():
-        filename = f"{OUTPUT_DIR}\\weather_data_{latitude}_{longitude}.csv"
+        filename = f"{OUTPUT_DIR}\\weather_data_{latitude}_{longitude}_{current_start_end_dates[0]}_{current_start_end_dates[1]}.csv"
         print(f"Saving data for point ({latitude}, {longitude}) to {filename}...")
         point.hourly_dataframe.to_csv(filename, index=False)
         print(f"Saved data for point ({latitude}, {longitude}) to {filename}")
@@ -172,10 +201,12 @@ def main():
             if data is None:
                 print(f"Error: No data for point index {point_index} and dates {current_start_end_dates}")
                 return
-        current_start_end_dates = get_month_start_end_dates(
-            (pd.to_datetime(current_start_end_dates[0]) - pd.to_datetime(START_DATE)).days // (STEP_MONTHS * 30) + 1
-        )
-    save_data_to_csv()
+        # Increase the start and end dates for the next iteration
+        print(f"Finished processing timeframe of {current_start_end_dates[0]} to {current_start_end_dates[1]}")
+        current_start_end_dates = get_month_start_end_dates((pd.to_datetime(current_start_end_dates[0]) - pd.to_datetime(START_DATE)).days // (STEP_MONTHS * 30) + 1)
+        save_data_to_csv(current_start_end_dates)
+        # Clear the lookup table for the next iteration to save memory
+        lookup_table_points.clear()
 
 
 if __name__ == "__main__":
