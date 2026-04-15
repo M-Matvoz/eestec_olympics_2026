@@ -1,0 +1,8 @@
+data/
+Include/
+Lib/
+__cache/
+__pycache__/
+Scripts/
+pyvenv.cfg
+.cache.sqlite
